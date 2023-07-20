@@ -36,3 +36,5 @@
 
 # CMake
 cmake-build-*/
+
+*test*

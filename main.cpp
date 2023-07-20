@@ -1,10 +1,18 @@
+#include "ResourceHolder.h"
 #include <SFML/Graphics.hpp>
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(sf::Vector2u(200, 200)), "SFML works!");
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
+    sf::err().rdbuf(nullptr);
+    sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
+
+    ResourceHolder<std::string, sf::Texture> textureHolder;
+    textureHolder.load("testing", "C:/Users/grigo/Repos/sfml-framework/testing.png");
+
+    sf::Sprite sprite;
+    sprite.setTexture(textureHolder.get("testing"));
+    sprite.setTextureRect(sf::IntRect(48, 0, 48, 48));
+    sprite.setScale(4.f, 4.f);
 
     while (window.isOpen())
     {
@@ -16,7 +24,7 @@ int main()
         }
 
         window.clear();
-        window.draw(shape);
+        window.draw(sprite);
         window.display();
     }
 
