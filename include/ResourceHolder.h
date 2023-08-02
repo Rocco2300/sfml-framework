@@ -16,12 +16,12 @@ public:
             return;
         }
 
-        std::unique_ptr<Resource> asset(new Resource);
-        if (!asset->loadFromFile(filename)) {
+        std::unique_ptr<Resource> resource(new Resource);
+        if (!resource->loadFromFile(filename)) {
             throw std::runtime_error("ResourceHolder::load - failed to load " + filename);
         }
 
-        insertResource(id, std::move(asset));
+        insertResource(id, std::move(resource));
     }
 
     template <typename Parameter>
@@ -30,12 +30,12 @@ public:
             return;
         }
 
-        std::unique_ptr<Resource> asset(new Resource);
-        if (!asset->loadFromFile(filename, secondParam)) {
+        std::unique_ptr<Resource> resource(new Resource);
+        if (!resource->loadFromFile(filename, secondParam)) {
             throw std::runtime_error("ResourceHolder::load - failed to load " + filename);
         }
 
-        insertResource(id, std::move(asset));
+        insertResource(id, std::move(resource));
     }
 
     Resource& get(Identifier id) {
