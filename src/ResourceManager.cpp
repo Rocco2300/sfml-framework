@@ -1,7 +1,8 @@
-#include "ResourceManager.h"
-ResourceManager* ResourceManager::m_instance = nullptr;
+#include "ResourceManager.hpp"
 
 #include <iostream>
+
+ResourceManager* ResourceManager::m_instance = nullptr;
 
 ResourceManager* ResourceManager::getInstance() {
     if (m_instance == nullptr) {
