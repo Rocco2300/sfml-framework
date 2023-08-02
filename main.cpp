@@ -8,11 +8,13 @@ int main()
 
     ResourceManager* resManager = ResourceManager::getInstance();
     resManager->loadTexture("C:/Users/grigo/Repos/sfml-framework/testing.png");
+    resManager->loadTextureDirectory("C:/Users/grigo/Pictures/sprites");
 
     sf::Sprite sprite;
-    sprite.setTexture(resManager->getTexture("testing"));
+    sprite.setTexture(resManager->getTexture("chicken"));
     sprite.setTextureRect(sf::IntRect(48, 0, 48, 48));
     sprite.setScale(4.f, 4.f);
+
 
     while (window.isOpen())
     {

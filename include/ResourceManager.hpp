@@ -16,7 +16,10 @@ public:
 
     sf::Texture& getTexture(const std::string& id);
     void loadTexture(const std::string& path);
+    void loadTextureDirectory(const std::string& path);
 
 private:
     ResourceManager() = default;
+
+    std::string getFileName(const std::string& path);
 };
