@@ -1,8 +1,7 @@
 #include "ResourceManager.hpp"
 #include <SFML/Graphics.hpp>
 
-int main()
-{
+int main() {
     sf::err().rdbuf(nullptr);
     sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
 
@@ -16,11 +15,10 @@ int main()
     sprite.setScale(4.f, 4.f);
 
 
-    while (window.isOpen())
-    {
+    while (window.isOpen()) {
         sf::Event event{};
-        while (window.pollEvent(event))
-        {
+
+        while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
         }
