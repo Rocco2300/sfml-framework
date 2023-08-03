@@ -1,8 +1,8 @@
 #pragma once
 
-#include <string>
 #include <memory>
 #include <sstream>
+#include <string>
 #include <unordered_map>
 
 template <typename Identifier, typename Resource>

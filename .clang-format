@@ -44,11 +44,11 @@ MaxEmptyLinesToKeep: 2
 NamespaceIndentation: All
 ObjCSpaceAfterProperty: false
 ObjCSpaceBeforeProtocolList: true
-PointerAlignment: Right
+PointerAlignment: Left
 ReflowComments: false
 SpaceAfterCStyleCast: true
 SpaceAfterLogicalNot: false
-SpaceAfterTemplateKeyword: false
+SpaceAfterTemplateKeyword: true
 SpaceBeforeAssignmentOperators: true
 SpaceBeforeCpp11BracedList: false
 SpaceBeforeCtorInitializerColon: true

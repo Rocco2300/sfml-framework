@@ -1,7 +1,7 @@
 #include "ResourceManager.hpp"
 
-#include <iostream>
 #include <filesystem>
+#include <iostream>
 
 namespace fs = std::filesystem;
 
@@ -19,7 +19,7 @@ ResourceManager::~ResourceManager() {
     delete m_instance;
 }
 
-sf::Texture& ResourceManager::getTexture(const std::string &id) {
+sf::Texture& ResourceManager::getTexture(const std::string& id) {
     return getResource<sf::Texture, TextureHolder>(id, m_textures);
 }
 
@@ -27,7 +27,7 @@ void ResourceManager::loadTexture(const std::string& path) {
     loadResource<TextureHolder>(path, m_textures);
 }
 
-void ResourceManager::loadTextureDirectory(const std::string &path) {
+void ResourceManager::loadTextureDirectory(const std::string& path) {
     loadResourceDirectory<TextureHolder>(path, m_textures);
 }
 
