@@ -20,20 +20,15 @@ ResourceManager::~ResourceManager() {
 }
 
 sf::Texture& ResourceManager::getTexture(const std::string &id) {
-    return m_textures.get(id);
+    return getResource<sf::Texture, TextureHolder>(id, m_textures);
 }
 
 void ResourceManager::loadTexture(const std::string& path) {
-    auto fileName = getFileName(path);
-    m_textures.load(fileName, path);
+    loadResource<TextureHolder>(path, m_textures);
 }
 
 void ResourceManager::loadTextureDirectory(const std::string &path) {
-    for (const auto& entry : fs::directory_iterator(path)) {
-        auto pathString = entry.path().generic_string();
-        auto fileName = getFileName(pathString);
-        m_textures.load(fileName, pathString);
-    }
+    loadResourceDirectory<TextureHolder>(path, m_textures);
 }
 
 std::string ResourceManager::getFileName(const std::string& path) {

@@ -11,7 +11,7 @@ int main()
     resManager->loadTextureDirectory("C:/Users/grigo/Pictures/sprites");
 
     sf::Sprite sprite;
-    sprite.setTexture(resManager->getTexture("chicken"));
+    sprite.setTexture(resManager->getTexture("testing"));
     sprite.setTextureRect(sf::IntRect(48, 0, 48, 48));
     sprite.setScale(4.f, 4.f);
 
