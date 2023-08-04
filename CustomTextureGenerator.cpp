@@ -1,4 +1,5 @@
 #include <filesystem>
+#include <iostream>
 #include <fstream>
 
 using ios = std::ios;
@@ -21,8 +22,9 @@ int main() {
     imageFile.read(imageBuffer, imageFileSize);
 
     auto metadataFileSize = fs::file_size(CurrentDir + MetadataFileName);
-    char* metadataBuffer = new char[metadataFileSize];
+    char* metadataBuffer = new char[metadataFileSize + 1];
     metadataFile.read(metadataBuffer, metadataFileSize);
+    metadataBuffer[metadataFileSize] = '\0';
 
     outFile.write(reinterpret_cast<char*>(&imageFileSize), sizeof(imageFileSize));
     outFile.write(reinterpret_cast<char*>(&metadataFileSize), sizeof(metadataFileSize));
