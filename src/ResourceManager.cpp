@@ -1,9 +1,6 @@
 #include "ResourceManager.hpp"
 
-#include <filesystem>
 #include <iostream>
-
-namespace fs = std::filesystem;
 
 ResourceManager* ResourceManager::m_instance = nullptr;
 

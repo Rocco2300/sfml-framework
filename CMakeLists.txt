@@ -9,7 +9,8 @@ include_directories(vendor/sfml/include)
 add_subdirectory(src)
 add_subdirectory(vendor/sfml)
 
-add_executable(test main.cpp)
+add_executable(playground Playground.cpp)
+add_executable(customTexGen CustomTextureGenerator.cpp)
 
-target_link_libraries(test core)
-target_link_libraries(test sfml-graphics sfml-window sfml-system sfml-audio)
+target_link_libraries(playground core)
+target_link_libraries(playground sfml-graphics sfml-window sfml-system sfml-audio)

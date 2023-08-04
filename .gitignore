@@ -37,4 +37,7 @@
 # CMake
 cmake-build-*/
 
-*test*
+# Files used for testing the framework
+*.txt
+*.tex
+*.png
