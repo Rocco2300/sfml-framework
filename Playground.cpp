@@ -14,7 +14,6 @@ int main() {
     sprite.setTextureRect(sf::IntRect(48, 0, 48, 48));
     sprite.setScale(4.f, 4.f);
 
-
     while (window.isOpen()) {
         sf::Event event{};
 
