@@ -1,8 +1,8 @@
-#include <fstream>
 #include <filesystem>
+#include <fstream>
 
 using ios = std::ios;
-namespace fs  = std::filesystem;
+namespace fs = std::filesystem;
 
 const std::string ImageFileName = "testing.png";
 const std::string MetadataFileName = "metadata.txt";
@@ -29,8 +29,8 @@ int main() {
     outFile.write(imageBuffer, imageFileSize);
     outFile.write(metadataBuffer, metadataFileSize);
 
-    delete imageBuffer;
-    delete metadataBuffer;
+    delete[] imageBuffer;
+    delete[] metadataBuffer;
 
     return 0;
 }
