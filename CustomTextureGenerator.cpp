@@ -1,6 +1,7 @@
 #include <filesystem>
 #include <iostream>
 #include <fstream>
+#include <memory>
 
 using ios = std::ios;
 namespace fs = std::filesystem;
@@ -20,21 +21,18 @@ int main(int argc, char* argv[]) {
     std::ofstream outFile(outputFilePath, ios::out | ios::binary);
 
     auto imageFileSize = fs::file_size(imageFilePath);
-    char* imageBuffer = new char[imageFileSize];
-    imageFile.read(imageBuffer, imageFileSize);
+    std::unique_ptr<char[]> imageBuffer(new char[imageFileSize]);
+    imageFile.read(imageBuffer.get(), imageFileSize);
 
     auto metadataFileSize = fs::file_size(metadataFilePath);
-    char* metadataBuffer = new char[metadataFileSize + 1];
-    metadataFile.read(metadataBuffer, metadataFileSize);
+    std::unique_ptr<char[]> metadataBuffer(new char[metadataFileSize + 1]);
+    metadataFile.read(metadataBuffer.get(), metadataFileSize);
     metadataBuffer[metadataFileSize] = '\0';
 
     outFile.write(reinterpret_cast<char*>(&imageFileSize), sizeof(imageFileSize));
     outFile.write(reinterpret_cast<char*>(&metadataFileSize), sizeof(metadataFileSize));
-    outFile.write(imageBuffer, imageFileSize);
-    outFile.write(metadataBuffer, metadataFileSize);
-
-    delete[] imageBuffer;
-    delete[] metadataBuffer;
+    outFile.write(imageBuffer.get(), imageFileSize);
+    outFile.write(metadataBuffer.get(), metadataFileSize);
 
     return 0;
 }
