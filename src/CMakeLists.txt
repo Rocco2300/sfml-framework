@@ -1,5 +1,8 @@
 file(GLOB SOURCES *.cpp)
-file(GLOB HEADERS include/*.h)
+file(GLOB HEADERS ${CMAKE_SOURCE_DIR}/include/*.h)
 
 add_library(core ${SOURCES} ${HEADERS})
+
+target_include_directories(core PUBLIC ${CMAKE_SOURCE_DIR}/include)
+
 target_link_libraries(core sfml-graphics)
