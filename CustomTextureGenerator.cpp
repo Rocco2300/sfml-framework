@@ -5,23 +5,25 @@
 using ios = std::ios;
 namespace fs = std::filesystem;
 
-const std::string ImageFileName = "testing.png";
-const std::string MetadataFileName = "metadata.txt";
-const std::string OutputFileName = "output.tex";
+int main(int argc, char* argv[]) {
 
-const std::string CurrentDir = "C:/Users/grigo/Repos/sfml-framework/";
+    if (argc != 4) {
+        std::cout << "Usage: customTexGen <path_to_image> <path_to_metadata> <path_to_output>" << std::endl;
+    }
 
-int main() {
+    const std::string imageFilePath = argv[1];
+    const std::string metadataFilePath = argv[2];
+    const std::string outputFilePath = argv[3];
 
-    std::ifstream imageFile(CurrentDir + ImageFileName, ios::in | ios::binary);
-    std::ifstream metadataFile(CurrentDir + MetadataFileName);
-    std::ofstream outFile(CurrentDir + OutputFileName, ios::out | ios::binary);
+    std::ifstream imageFile(imageFilePath, ios::in | ios::binary);
+    std::ifstream metadataFile(metadataFilePath);
+    std::ofstream outFile(outputFilePath, ios::out | ios::binary);
 
-    auto imageFileSize = fs::file_size(CurrentDir + ImageFileName);
+    auto imageFileSize = fs::file_size(imageFilePath);
     char* imageBuffer = new char[imageFileSize];
     imageFile.read(imageBuffer, imageFileSize);
 
-    auto metadataFileSize = fs::file_size(CurrentDir + MetadataFileName);
+    auto metadataFileSize = fs::file_size(metadataFilePath);
     char* metadataBuffer = new char[metadataFileSize + 1];
     metadataFile.read(metadataBuffer, metadataFileSize);
     metadataBuffer[metadataFileSize] = '\0';
