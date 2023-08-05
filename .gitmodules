@@ -2,3 +2,7 @@
 	path = vendor/sfml
 	url = https://github.com/SFML/SFML.git
 	branch = 2.5.1
+[submodule "vendor/nlohmann-json"]
+	path = vendor/nlohmann-json
+	url = https://github.com/nlohmann/json.git
+	branch = v3.11.2

@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 include_directories(include)
 include_directories(vendor/sfml/include)
+include_directories(vendor/nlohmann-json/include)
 
 add_subdirectory(src)
 add_subdirectory(vendor/sfml)
