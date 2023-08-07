@@ -1,8 +1,16 @@
 #include "ResourceManager.hpp"
+#include "SpriteSheet.hpp"
+
 #include <SFML/Graphics.hpp>
+#include <nlohmann/json.hpp>
 
 #include <iostream>
 #include <fstream>
+#include <memory>
+
+using json = nlohmann::json;
+
+
 
 int main() {
     sf::err().rdbuf(nullptr);
@@ -16,36 +24,13 @@ int main() {
 //    sprite.setTexture(resManager->getTexture("testing"));
 //    sprite.setTextureRect(sf::IntRect(48, 0, 48, 48));
 //    sprite.setScale(4.f, 4.f);
-
-    std::ifstream textureFile("C:/Users/grigo/Repos/sfml-framework/output.tex", std::ios::in | std::ios::binary);
-
-    uint64_t imageSectionSize{};
-    uint64_t metadataSectionSize{};
-    textureFile.read(reinterpret_cast<char*>(&imageSectionSize), sizeof(imageSectionSize));
-    textureFile.read(reinterpret_cast<char*>(&metadataSectionSize), sizeof(metadataSectionSize));
-
-    std::cout << "Image size: " << imageSectionSize << std::endl;
-    std::cout << "Metadata size: " << metadataSectionSize << std::endl;
-
-    char* imageBuffer = new char[imageSectionSize];
-    char* metadataBuffer = new char[metadataSectionSize];
-    textureFile.read(imageBuffer, imageSectionSize);
-    textureFile.read(metadataBuffer, metadataSectionSize);
-
-    sf::Texture texture;
-    if (!texture.loadFromMemory(imageBuffer, imageSectionSize)) {
-        std::cout << "Error in loading texture from embedded image." << std::endl;
-    }
+    SpriteSheet spriteSheet;
+    spriteSheet.loadFromFile("C:/Users/grigo/Repos/sfml-framework/output.tex");
 
     sf::Sprite sprite;
-    sprite.setTexture(texture);
+    sprite.setTexture(spriteSheet.getTexture());
     sprite.setTextureRect(sf::IntRect(48, 0, 48, 48));
     sprite.setScale(4.f, 4.f);
-
-    std::cout << "Metadata: " << metadataBuffer << std::endl;
-
-    delete[] imageBuffer;
-    delete[] metadataBuffer;
 
     while (window.isOpen()) {
         sf::Event event{};
