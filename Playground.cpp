@@ -28,8 +28,8 @@ int main() {
     spriteSheet.loadFromFile("C:/Users/grigo/Repos/sfml-framework/output.tex");
 
     sf::Sprite sprite;
-    sprite.setTexture(spriteSheet.getTexture());
-    sprite.setTextureRect(sf::IntRect(48, 0, 48, 48));
+    sprite.setTexture(*spriteSheet.getTexture("runningLeft"));
+    sprite.setTextureRect(*spriteSheet.at("runningLeft", 3));
     sprite.setScale(4.f, 4.f);
 
     while (window.isOpen()) {
