@@ -21,18 +21,17 @@ int main(int argc, char* argv[]) {
     std::ofstream outFile(outputFilePath, ios::out | ios::binary);
 
     auto imageFileSize = fs::file_size(imageFilePath);
-    std::unique_ptr<char[]> imageBuffer(new char[imageFileSize]);
-    imageFile.read(imageBuffer.get(), imageFileSize);
+    std::vector<std::byte> imageBuffer(imageFileSize);
+    imageFile.read(reinterpret_cast<char*>(imageBuffer.data()), imageFileSize);
 
     auto metadataFileSize = fs::file_size(metadataFilePath);
-    std::unique_ptr<char[]> metadataBuffer(new char[metadataFileSize + 1]);
-    metadataFile.read(metadataBuffer.get(), metadataFileSize);
-    metadataBuffer[metadataFileSize] = '\0';
+    std::vector<std::byte> metadataBuffer(metadataFileSize + 1);
+    metadataFile.read(reinterpret_cast<char*>(metadataBuffer.data()), metadataFileSize);
 
     outFile.write(reinterpret_cast<char*>(&imageFileSize), sizeof(imageFileSize));
     outFile.write(reinterpret_cast<char*>(&metadataFileSize), sizeof(metadataFileSize));
-    outFile.write(imageBuffer.get(), imageFileSize);
-    outFile.write(metadataBuffer.get(), metadataFileSize);
+    outFile.write(reinterpret_cast<char*>(imageBuffer.data()), imageFileSize);
+    outFile.write(reinterpret_cast<char*>(metadataBuffer.data()), metadataFileSize);
 
     return 0;
 }

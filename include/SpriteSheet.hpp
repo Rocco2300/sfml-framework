@@ -19,4 +19,7 @@ public:
 
     bool loadFromFile(const std::string& filename);
     sf::Texture& getTexture();
+
+private:
+    std::unique_ptr<sf::Image> load(const std::string& filename);
 };
