@@ -27,10 +27,15 @@ int main() {
     SpriteSheet spriteSheet;
     spriteSheet.loadFromFile("C:/Users/grigo/Repos/sfml-framework/output.tex");
 
+    std::cout << "Spritesheet size: " << sizeof(SpriteSheet) << std::endl;
+
     sf::Sprite sprite;
     sprite.setTexture(*spriteSheet.getTexture("runningLeft"));
     sprite.setTextureRect(*spriteSheet.at("runningLeft", 3));
     sprite.setScale(4.f, 4.f);
+
+    std::cout << "Sector size: " << sizeof(Sector) << '\n';
+    std::cout << "Tile size: " << sizeof(Tile) << '\n';
 
     while (window.isOpen()) {
         sf::Event event{};

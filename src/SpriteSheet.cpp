@@ -3,23 +3,22 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <nlohmann/json.hpp>
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
+#include <ranges>
 
 using json = nlohmann::json;
 
 bool SpriteSheet::loadFromFile(const std::string& filename) {
-    std::unique_ptr<sf::Image> image = load(filename);
-    if (!image) {
-        return false;
-    }
+    auto [imageBuffer, metadataBuffer] = loadDataFromFile(filename);
 
     m_texture = std::make_unique<sf::Texture>();
-    if (!m_texture->loadFromImage(*image)) {
+    if (!m_texture->loadFromMemory(imageBuffer.data(), imageBuffer.size())) {
         std::cerr << "Error in loading texture from embedded image." << std::endl;
         return false;
     }
 
+    loadMetadataFromBuffer(metadataBuffer);
     return true;
 }
 
@@ -28,50 +27,70 @@ sf::Texture* SpriteSheet::getTexture() {
 }
 
 sf::Texture* SpriteSheet::getTexture(const std::string& name) {
-    if (name == m_name) {
-        return m_texture.get();
+    return m_texture.get();
+}
+
+bool SpriteSheet::contains(const std::string& name) {
+    auto sameName = [&](const auto& sector) { return sector.name == name; };
+    if (std::ranges::any_of(m_sectors, sameName)) {
+        return true;
     }
 
-    for (const auto& child : m_children) {
-        if (child.m_name == name) {
-            return child.m_texture.get();
-        }
-    }
-
-    return nullptr;
+    return false;
 }
 
 std::optional<sf::IntRect> SpriteSheet::at(const std::string& name, uint16_t index) {
-    auto spriteSheet = getSubSpriteSheet(name);
-
-    auto x = index % spriteSheet->m_horizontalTileNo;
-    auto y = index / spriteSheet->m_horizontalTileNo;
-
-    if (x >= spriteSheet->m_horizontalTileNo || y >= spriteSheet->m_verticalTileNo) {
+    auto sector = getSector(name);
+    if (index < 0 || index > sector->tiles.size()) {
         return std::nullopt;
     }
 
-    auto tileWidth = spriteSheet->m_width / spriteSheet->m_horizontalTileNo;
-    auto tileHeight = spriteSheet->m_height / spriteSheet->m_verticalTileNo;
-    return sf::IntRect(x * tileWidth, y * tileHeight, tileWidth, tileHeight);
+    auto& bounds = sector->tiles[index].bounds;
+    return sf::IntRect(bounds.left, bounds.top, bounds.width, bounds.height);
 }
 
-SpriteSheet* SpriteSheet::getSubSpriteSheet(const std::string& name) {
-    if (name == m_name) {
-        return this;
-    }
-
-    for (auto& child : m_children) {
-        if (child.m_name == name) {
-            return &child;
+Sector* SpriteSheet::getSector(const std::string& name) {
+    for (auto& sector: m_sectors) {
+        if (sector.name == name) {
+            return &sector;
         }
     }
 
     return nullptr;
 }
 
+void SpriteSheet::loadMetadataFromBuffer(const ByteBuffer& metadata) {
+    json jsonMetadata = json::parse(metadata);
+    for (const auto& elem: jsonMetadata.at("sectors")) {
+        json pos = elem.at("pos");
+        json tileNo = elem.at("tileNo");
 
-std::unique_ptr<sf::Image> SpriteSheet::load(const std::string& filename) {
+        Sector sector{};
+        sector.name = elem.at("name");
+        sector.origin.x = pos.at("x");
+        sector.origin.y = pos.at("y");
+
+        uint8_t tileNoX = tileNo.at("x");
+        uint8_t tileNoY = tileNo.at("y");
+        uint16_t tileWidth = static_cast<int>(pos.at("w")) / tileNoX;
+        uint16_t tileHeight = static_cast<int>(pos.at("h")) / tileNoY;
+
+        for (int y = 0; y < tileNoY; y++) {
+            for (int x = 0; x < tileNoX; x++) {
+                Tile tile;
+                tile.bounds.left = sector.origin.x + x * tileWidth;
+                tile.bounds.top = sector.origin.y + y * tileHeight;
+                tile.bounds.width = tileWidth;
+                tile.bounds.height = tileHeight;
+                sector.tiles.push_back(tile);
+            }
+        }
+
+        m_sectors.push_back(sector);
+    }
+}
+
+std::pair<ByteBuffer, ByteBuffer> SpriteSheet::loadDataFromFile(const std::string& filename) {
     std::ifstream textureFile("C:/Users/grigo/Repos/sfml-framework/output.tex", std::ios::in | std::ios::binary);
 
     uint64_t imageSectionSize{};
@@ -79,37 +98,10 @@ std::unique_ptr<sf::Image> SpriteSheet::load(const std::string& filename) {
     textureFile.read(reinterpret_cast<char*>(&imageSectionSize), sizeof(imageSectionSize));
     textureFile.read(reinterpret_cast<char*>(&metadataSectionSize), sizeof(metadataSectionSize));
 
-    std::vector<std::byte> imageBuffer(imageSectionSize);
-    std::vector<std::byte> metadataBuffer(metadataSectionSize);
+    ByteBuffer imageBuffer(imageSectionSize);
+    ByteBuffer metadataBuffer(metadataSectionSize);
     textureFile.read(reinterpret_cast<char*>(imageBuffer.data()), imageSectionSize);
     textureFile.read(reinterpret_cast<char*>(metadataBuffer.data()), metadataSectionSize);
 
-    std::unique_ptr<sf::Image> image(new sf::Image);
-    if (!image->loadFromMemory(reinterpret_cast<char*>(imageBuffer.data()), imageSectionSize)) {
-        std::cerr << "Error in loading texture from embedded image." << std::endl;
-        return nullptr;
-    }
-
-    json metadata = json::parse(reinterpret_cast<char*>(metadataBuffer.data()));
-    for (const auto& elem : metadata.at("sprites")) {
-        SpriteSheet child{};
-        child.m_name = elem.at("name");
-        child.m_width = elem.at("width");
-        child.m_height = elem.at("height");
-        child.m_horizontalTileNo = elem.at("tilesHorizontal");
-        child.m_verticalTileNo = elem.at("tilesVertical");
-        auto originX = elem.at("originX");
-        auto originY = elem.at("originY");
-
-        child.m_texture = std::make_unique<sf::Texture>();
-        sf::IntRect area(originX, originY, child.m_width, child.m_height);
-        if (!child.m_texture->loadFromImage(*image, area)) {
-            std::cerr << "Error loading sub image from spritesheet!" << std::endl;
-            break;
-        }
-
-        m_children.push_back(std::move(child));
-    }
-
-    return image;
+    return {imageBuffer, metadataBuffer};
 }

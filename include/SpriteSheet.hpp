@@ -6,15 +6,23 @@
 #include <memory>
 #include <optional>
 
+using ByteBuffer = std::vector<std::byte>;
+
+struct Tile {
+    std::string name;
+    sf::Rect<uint16_t> bounds;
+};
+
+struct Sector {
+    std::string name;
+    sf::Vector2<uint16_t> origin;
+    std::vector<Tile> tiles;
+};
+
 class SpriteSheet {
 private:
     std::unique_ptr<sf::Texture> m_texture;
-    std::string m_name;
-    uint16_t m_width{};
-    uint16_t m_height{};
-    uint8_t m_horizontalTileNo{};
-    uint8_t m_verticalTileNo{};
-    std::vector<SpriteSheet> m_children;
+    std::vector<Sector> m_sectors;
 
 public:
     SpriteSheet() = default;
@@ -23,9 +31,11 @@ public:
     sf::Texture* getTexture();
     sf::Texture* getTexture(const std::string& name);
 
+    bool contains(const std::string& name);
     std::optional<sf::IntRect> at(const std::string& name, uint16_t index);
 
 private:
-    SpriteSheet* getSubSpriteSheet(const std::string& name);
-    std::unique_ptr<sf::Image> load(const std::string& filename);
+    Sector* getSector(const std::string& name);
+    void loadMetadataFromBuffer(const ByteBuffer& metadata);
+    std::pair<ByteBuffer, ByteBuffer> loadDataFromFile(const std::string& filename);
 };
