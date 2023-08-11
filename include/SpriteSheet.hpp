@@ -29,10 +29,9 @@ public:
 
     bool loadFromFile(const std::string& filename);
     sf::Texture* getTexture();
-    sf::Texture* getTexture(const std::string& name);
 
-    bool contains(const std::string& name);
-    std::optional<sf::IntRect> at(const std::string& name, uint16_t index);
+    bool containsSector(const std::string& name);
+    std::optional<sf::IntRect> getTextureRect(const std::string& name, uint16_t index);
 
 private:
     Sector* getSector(const std::string& name);

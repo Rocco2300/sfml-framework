@@ -30,8 +30,8 @@ int main() {
     std::cout << "Spritesheet size: " << sizeof(SpriteSheet) << std::endl;
 
     sf::Sprite sprite;
-    sprite.setTexture(*spriteSheet.getTexture("runningLeft"));
-    sprite.setTextureRect(*spriteSheet.at("runningLeft", 3));
+    sprite.setTexture(*spriteSheet.getTexture());
+    sprite.setTextureRect(*spriteSheet.getTextureRect("runningLeft", 3));
     sprite.setScale(4.f, 4.f);
 
     std::cout << "Sector size: " << sizeof(Sector) << '\n';

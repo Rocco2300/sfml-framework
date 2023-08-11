@@ -26,11 +26,7 @@ sf::Texture* SpriteSheet::getTexture() {
     return m_texture.get();
 }
 
-sf::Texture* SpriteSheet::getTexture(const std::string& name) {
-    return m_texture.get();
-}
-
-bool SpriteSheet::contains(const std::string& name) {
+bool SpriteSheet::containsSector(const std::string& name) {
     auto sameName = [&](const auto& sector) { return sector.name == name; };
     if (std::ranges::any_of(m_sectors, sameName)) {
         return true;
@@ -39,7 +35,7 @@ bool SpriteSheet::contains(const std::string& name) {
     return false;
 }
 
-std::optional<sf::IntRect> SpriteSheet::at(const std::string& name, uint16_t index) {
+std::optional<sf::IntRect> SpriteSheet::getTextureRect(const std::string& name, uint16_t index) {
     auto sector = getSector(name);
     if (index < 0 || index > sector->tiles.size()) {
         return std::nullopt;
