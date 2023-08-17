@@ -1,7 +1,7 @@
-file(GLOB SOURCES *.cpp)
-file(GLOB HEADERS ${CMAKE_SOURCE_DIR}/include/*.h)
 
-add_library(core ${SOURCES} ${HEADERS})
+file(GLOB HEADERS ${CMAKE_SOURCE_DIR}/include/*.hpp)
+
+add_library(core ${HEADERS} SpriteSheet.cpp)
 
 target_include_directories(core PUBLIC ${CMAKE_SOURCE_DIR}/include)
 target_include_directories(core PUBLIC ${CMAKE_SOURCE_DIR}/vendor/sfml/include)
