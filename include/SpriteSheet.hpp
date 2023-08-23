@@ -6,8 +6,6 @@
 #include <memory>
 #include <optional>
 
-using ByteBuffer = std::vector<std::byte>;
-
 struct Tile {
     std::string name;
     sf::Rect<uint16_t> bounds;
@@ -27,14 +25,14 @@ private:
 public:
     SpriteSheet() = default;
 
-    bool loadFromFile(const std::string& filename);
-    sf::Texture* getTexture();
+    bool loadTextureFromFile(const std::string& filename);
+    bool loadMetadataFromFile(const std::string& filename);
 
+    sf::Texture* getTexture();
     bool containsSector(const std::string& name);
     std::optional<sf::IntRect> getTextureRect(const std::string& name, uint16_t index);
 
 private:
     Sector* getSector(const std::string& name);
-    void loadMetadataFromBuffer(const ByteBuffer& metadata);
-    std::pair<ByteBuffer, ByteBuffer> loadDataFromFile(const std::string& filename);
+    void loadMetadataFromBuffer(std::string_view metadata);
 };

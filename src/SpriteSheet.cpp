@@ -3,24 +3,13 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <nlohmann/json.hpp>
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <ranges>
 
+namespace fs = std::filesystem;
 using json = nlohmann::json;
-
-bool SpriteSheet::loadFromFile(const std::string& filename) {
-    auto [imageBuffer, metadataBuffer] = loadDataFromFile(filename);
-
-    m_texture = std::make_unique<sf::Texture>();
-    if (!m_texture->loadFromMemory(imageBuffer.data(), imageBuffer.size())) {
-        std::cerr << "Error in loading texture from embedded image." << std::endl;
-        return false;
-    }
-
-    loadMetadataFromBuffer(metadataBuffer);
-    return true;
-}
 
 sf::Texture* SpriteSheet::getTexture() {
     return m_texture.get();
@@ -55,7 +44,7 @@ Sector* SpriteSheet::getSector(const std::string& name) {
     return nullptr;
 }
 
-void SpriteSheet::loadMetadataFromBuffer(const ByteBuffer& metadata) {
+void SpriteSheet::loadMetadataFromBuffer(std::string_view metadata) {
     json jsonMetadata = json::parse(metadata);
     for (const auto& elem: jsonMetadata.at("sectors")) {
         json pos = elem.at("pos");
@@ -86,18 +75,32 @@ void SpriteSheet::loadMetadataFromBuffer(const ByteBuffer& metadata) {
     }
 }
 
-std::pair<ByteBuffer, ByteBuffer> SpriteSheet::loadDataFromFile(const std::string& filename) {
-    std::ifstream textureFile("C:/Users/grigo/Repos/sfml-framework/output.tex", std::ios::in | std::ios::binary);
+bool SpriteSheet::loadTextureFromFile(const std::string& filename) {
+    std::ifstream textureFile(filename, std::ios::in | std::ios::binary);
 
-    uint64_t imageSectionSize{};
-    uint64_t metadataSectionSize{};
-    textureFile.read(reinterpret_cast<char*>(&imageSectionSize), sizeof(imageSectionSize));
-    textureFile.read(reinterpret_cast<char*>(&metadataSectionSize), sizeof(metadataSectionSize));
+    auto imageFileSize = fs::file_size(filename);
+    std::vector<std::byte> imageBuffer(imageFileSize);
+    textureFile.read(reinterpret_cast<char*>(imageBuffer.data()), imageFileSize);
 
-    ByteBuffer imageBuffer(imageSectionSize);
-    ByteBuffer metadataBuffer(metadataSectionSize);
-    textureFile.read(reinterpret_cast<char*>(imageBuffer.data()), imageSectionSize);
-    textureFile.read(reinterpret_cast<char*>(metadataBuffer.data()), metadataSectionSize);
+    m_texture = std::make_unique<sf::Texture>();
+    if (!m_texture->loadFromMemory(imageBuffer.data(), imageBuffer.size())) {
+        std::cerr << "Error in loading texture " << filename << ".\n";
+        return false;
+    }
 
-    return {imageBuffer, metadataBuffer};
+    return true;
+}
+
+bool SpriteSheet::loadMetadataFromFile(const std::string& filename) {
+    std::ifstream metadataFile(filename);
+    if (metadataFile.fail()) {
+        return false;
+    }
+
+    std::stringstream metadataBuffer;
+    metadataBuffer << metadataFile.rdbuf();
+
+    // TODO: add error checking stuff?
+    loadMetadataFromBuffer(metadataBuffer.str());
+    return true;
 }
