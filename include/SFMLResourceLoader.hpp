@@ -13,8 +13,12 @@ private:
 
 public:
     SFMLResourceLoader() = default;
-    SFMLResourceLoader(ResHolder& resourceHolder, std::string_view directory = "", std::string_view filetype = "")
-        : ResourceLoader<ResHolder>(resourceHolder), m_directory{directory}, m_filetype{filetype} {}
+    SFMLResourceLoader(ResHolder& resourceHolder,
+                       std::string_view directory = "",
+                       std::string_view filetype = "")
+        : ResourceLoader<ResHolder>(resourceHolder),
+          m_directory{directory},
+          m_filetype{filetype} {}
 
     void setDirectory(std::string_view directory) { m_directory = directory; }
     void setFiletype(std::string_view filetype) { m_filetype = filetype; }

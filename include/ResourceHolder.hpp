@@ -22,21 +22,24 @@ public:
 
         std::unique_ptr<Resource> resource(new Resource);
         if (!resource->loadFromFile(filename)) {
-            throw std::runtime_error("ResourceHolder::load - failed to load " + filename);
+            throw std::runtime_error("ResourceHolder::load - failed to load " +
+                                     filename);
         }
 
         insertResource(id, std::move(resource));
     }
 
     template <typename Parameter>
-    void load(Identifier id, const std::string& filename, Parameter secondParam) {
+    void
+    load(Identifier id, const std::string& filename, Parameter secondParam) {
         if (m_assetMap.count(id)) {
             return;
         }
 
         std::unique_ptr<Resource> resource(new Resource);
         if (!resource->loadFromFile(filename, secondParam)) {
-            throw std::runtime_error("ResourceHolder::load - failed to load " + filename);
+            throw std::runtime_error("ResourceHolder::load - failed to load " +
+                                     filename);
         }
 
         insertResource(id, std::move(resource));
@@ -54,7 +57,8 @@ public:
         auto it = m_assetMap.find(id);
         if (it == m_assetMap.end()) {
             std::stringstream errorMessage;
-            errorMessage << "ResourceHolder::get - resource " << id << " doesn't exist";
+            errorMessage << "ResourceHolder::get - resource " << id
+                         << " doesn't exist";
             throw std::runtime_error(errorMessage.str());
         }
 
@@ -65,7 +69,8 @@ public:
         auto it = m_assetMap.find(id);
         if (it == m_assetMap.end()) {
             std::stringstream errorMessage;
-            errorMessage << "ResourceHolder::get - resource " << id << " doesn't exist";
+            errorMessage << "ResourceHolder::get - resource " << id
+                         << " doesn't exist";
             throw std::runtime_error(errorMessage.str());
         }
 
@@ -74,11 +79,13 @@ public:
 
 private:
     void insertResource(Identifier id, std::unique_ptr<Resource> resource) {
-        auto inserted = m_assetMap.insert(std::make_pair(id, std::move(resource)));
+        auto inserted =
+                m_assetMap.insert(std::make_pair(id, std::move(resource)));
 
         if (!inserted.second) {
             std::stringstream errorMessage;
-            errorMessage << "ResourceHolder::insertResource - failed to insert " << id;
+            errorMessage << "ResourceHolder::insertResource - failed to insert "
+                         << id;
             throw std::runtime_error(errorMessage.str());
         }
     }

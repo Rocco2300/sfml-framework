@@ -11,9 +11,7 @@
 namespace fs = std::filesystem;
 using json = nlohmann::json;
 
-sf::Texture* SpriteSheet::getTexture() {
-    return m_texture.get();
-}
+sf::Texture* SpriteSheet::getTexture() { return m_texture.get(); }
 
 bool SpriteSheet::containsSector(const std::string& name) {
     auto sameName = [&](const auto& sector) { return sector.name == name; };
@@ -24,7 +22,8 @@ bool SpriteSheet::containsSector(const std::string& name) {
     return false;
 }
 
-std::optional<sf::IntRect> SpriteSheet::getTextureRect(const std::string& name, uint16_t index) {
+std::optional<sf::IntRect> SpriteSheet::getTextureRect(const std::string& name,
+                                                       uint16_t index) {
     auto sector = getSector(name);
     if (index < 0 || index > sector->tiles.size()) {
         return std::nullopt;
@@ -80,7 +79,8 @@ bool SpriteSheet::loadTextureFromFile(const std::string& filename) {
 
     auto imageFileSize = fs::file_size(filename);
     std::vector<std::byte> imageBuffer(imageFileSize);
-    textureFile.read(reinterpret_cast<char*>(imageBuffer.data()), imageFileSize);
+    textureFile.read(reinterpret_cast<char*>(imageBuffer.data()),
+                     imageFileSize);
 
     m_texture = std::make_unique<sf::Texture>();
     if (!m_texture->loadFromMemory(imageBuffer.data(), imageBuffer.size())) {

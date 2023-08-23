@@ -14,9 +14,12 @@ protected:
 
 public:
     ResourceLoader() = default;
-    ResourceLoader(ResHolder& resourceHolder) : m_resourceHolder{&resourceHolder} {}
+    ResourceLoader(ResHolder& resourceHolder)
+        : m_resourceHolder{&resourceHolder} {}
 
-    void setResourceHolder(ResHolder& resourceHolder) { m_resourceHolder = resourceHolder; }
+    void setResourceHolder(ResHolder& resourceHolder) {
+        m_resourceHolder = resourceHolder;
+    }
 
     virtual void load(Identifier id, std::string_view filename) = 0;
 };

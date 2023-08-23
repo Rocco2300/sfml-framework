@@ -1,7 +1,7 @@
 #include "ResourceHolder.hpp"
 #include "SFMLResourceLoader.hpp"
-#include "SpriteSheetLoader.hpp"
 #include "SpriteSheet.hpp"
+#include "SpriteSheetLoader.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <nlohmann/json.hpp>
@@ -20,14 +20,19 @@ int main() {
     SFMLResourceLoader resourceLoader(resourceHolder, Path, ".png");
 
     ResourceHolder<std::string, SpriteSheet> spritesheetHolder;
-    SpriteSheetLoader spriteSheetLoader(spritesheetHolder, Path, ".png", Path, ".json");
+    SpriteSheetLoader spriteSheetLoader(spritesheetHolder,
+                                        Path,
+                                        ".png",
+                                        Path,
+                                        ".json");
 
     resourceLoader.load("player", "testing");
     spriteSheetLoader.load("player", "testing");
 
     sf::Sprite sprite;
     sprite.setTexture(*spritesheetHolder.get("player").getTexture());
-    sprite.setTextureRect(*spritesheetHolder.get("player").getTextureRect("runningLeft", 3));
+    sprite.setTextureRect(
+            *spritesheetHolder.get("player").getTextureRect("runningLeft", 3));
     sprite.setScale(4.f, 4.f);
 
 
