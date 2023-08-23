@@ -1,5 +1,6 @@
 #include "ResourceHolder.hpp"
 #include "SFMLResourceLoader.hpp"
+#include "SpriteSheetLoader.hpp"
 #include "SpriteSheet.hpp"
 
 #include <SFML/Graphics.hpp>
@@ -9,21 +10,24 @@
 
 using json = nlohmann::json;
 
+const std::string Path = "C:/Users/grigo/Repos/sfml-framework/";
+
 int main() {
     sf::err().rdbuf(nullptr);
     sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
 
     ResourceHolder<std::string, sf::Texture> resourceHolder;
-    SFMLResourceLoader resourceLoader(resourceHolder, "C:/Users/grigo/Repos/sfml-framework/", ".png");
+    SFMLResourceLoader resourceLoader(resourceHolder, Path, ".png");
+
+    ResourceHolder<std::string, SpriteSheet> spritesheetHolder;
+    SpriteSheetLoader spriteSheetLoader(spritesheetHolder, Path, ".png", Path, ".json");
 
     resourceLoader.load("player", "testing");
+    spriteSheetLoader.load("player", "testing");
 
-    //    SpriteSheet spriteSheet;
-    //    spriteSheet.loadFromFile("C:/Users/grigo/Repos/sfml-framework/output.tex");
-    //
     sf::Sprite sprite;
-    sprite.setTexture(resourceHolder.get("player"));
-    sprite.setTextureRect(sf::IntRect(0, 0, 48, 48));
+    sprite.setTexture(*spritesheetHolder.get("player").getTexture());
+    sprite.setTextureRect(*spritesheetHolder.get("player").getTextureRect("runningLeft", 3));
     sprite.setScale(4.f, 4.f);
 
 
@@ -31,7 +35,8 @@ int main() {
         sf::Event event{};
 
         while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) window.close();
+            if (event.type == sf::Event::Closed)
+                window.close();
         }
 
         window.clear();
