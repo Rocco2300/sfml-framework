@@ -1,5 +1,5 @@
 #include "ResourceHolder.hpp"
-#include "ResourceLoader.hpp"
+#include "SFMLResourceLoader.hpp"
 #include "SpriteSheet.hpp"
 
 #include <SFML/Graphics.hpp>
@@ -14,7 +14,7 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
 
     ResourceHolder<std::string, sf::Texture> resourceHolder;
-    ResourceLoader resourceLoader(resourceHolder, "C:/Users/grigo/Repos/sfml-framework/", ".png");
+    SFMLResourceLoader resourceLoader(resourceHolder, "C:/Users/grigo/Repos/sfml-framework/", ".png");
 
     resourceLoader.load("player", "testing");
 
