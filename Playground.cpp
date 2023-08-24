@@ -27,9 +27,9 @@ int main() {
     spriteSheetLoader.load("player", "testing");
 
     sf::Sprite sprite;
-    sprite.setTexture(*spritesheetHolder.get("player").getTexture());
-    sprite.setTextureRect(
-            *spritesheetHolder.get("player").getTextureRect("runningLeft", 3));
+    auto* spriteSheet = &spritesheetHolder.get("player");
+    sprite.setTexture(*spriteSheet->getTexture());
+    sprite.setTextureRect(*spriteSheet->getTextureRect("runningLeft", 3));
     sprite.setScale(4.f, 4.f);
 
 

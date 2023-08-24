@@ -31,7 +31,7 @@ public:
     sf::Texture* getTexture();
     bool containsSector(const std::string& name);
     std::optional<sf::IntRect> getTextureRect(const std::string& name,
-                                              uint16_t index);
+                                              uint16_t index = 0);
 
 private:
     Sector* getSector(const std::string& name);
