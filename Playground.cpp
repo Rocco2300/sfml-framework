@@ -20,10 +20,7 @@ int main() {
     SFMLResourceLoader resourceLoader(resourceHolder, Path, ".png");
 
     ResourceHolder<std::string, SpriteSheet> spritesheetHolder;
-    SpriteSheetLoader spriteSheetLoader(spritesheetHolder,
-                                        Path,
-                                        ".png",
-                                        Path,
+    SpriteSheetLoader spriteSheetLoader(spritesheetHolder, Path, ".png", Path,
                                         ".json");
 
     resourceLoader.load("player", "testing");
