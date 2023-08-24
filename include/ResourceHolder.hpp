@@ -15,36 +15,6 @@ private:
     std::unordered_map<Identifier, std::unique_ptr<Resource>> m_assetMap;
 
 public:
-    void load(Identifier id, const std::string& filename) {
-        if (m_assetMap.count(id)) {
-            return;
-        }
-
-        std::unique_ptr<Resource> resource(new Resource);
-        if (!resource->loadFromFile(filename)) {
-            throw std::runtime_error("ResourceHolder::load - failed to load " +
-                                     filename);
-        }
-
-        insertResource(id, std::move(resource));
-    }
-
-    template <typename Parameter>
-    void
-    load(Identifier id, const std::string& filename, Parameter secondParam) {
-        if (m_assetMap.count(id)) {
-            return;
-        }
-
-        std::unique_ptr<Resource> resource(new Resource);
-        if (!resource->loadFromFile(filename, secondParam)) {
-            throw std::runtime_error("ResourceHolder::load - failed to load " +
-                                     filename);
-        }
-
-        insertResource(id, std::move(resource));
-    }
-
     void insert(Identifier id, std::unique_ptr<Resource>&& resource) {
         if (m_assetMap.count(id)) {
             return;
