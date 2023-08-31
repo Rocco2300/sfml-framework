@@ -5,13 +5,12 @@
 
 template <typename ResHolder>
 class SpriteSheetLoader : public ResourceLoader<ResHolder> {
-
-private:
     using Identifier = typename ResHolder::IdentifierType;
     using Resource = typename ResHolder::ResourceType;
 
     static_assert(std::is_same<Resource, SpriteSheet>::value,
                   "Error: SpriteSheet specialization required");
+private:
 
     std::string m_textureDirectory{};
     std::string m_textureFiletype{};
@@ -35,6 +34,7 @@ public:
     void setTextureDirectory(std::string_view directory) {
         m_textureDirectory = directory;
     }
+
     void setMetadataDirectory(std::string_view directory) {
         m_metadataDirectory = directory;
     }
@@ -42,13 +42,12 @@ public:
     void setTextureFiletype(std::string_view fileType) {
         m_textureFiletype = fileType;
     }
+
     void setMetadataFiletype(std::string_view fileType) {
         m_metadataFiletype = fileType;
     }
 
-
     void load(Identifier id, std::string_view filename) override {
-        // to be done
         std::unique_ptr<Resource> resource(new Resource);
 
         std::string texturePath =
