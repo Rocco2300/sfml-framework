@@ -18,6 +18,9 @@ int main() {
     sf::err().rdbuf(nullptr);
     sf::RenderWindow window(sf::VideoMode(400, 400), "SFML works!");
 
+    ResourceHolder<std::string, sf::Texture> textureHolder;
+    SFMLResourceLoader sfmlLoader(textureHolder, Path, ".png");
+
     ResourceHolder<std::string, SpriteSheet> spritesheetHolder;
     SpriteSheetLoader spriteSheetLoader(spritesheetHolder, Path, ".png", Path,
                                         ".json");
@@ -41,7 +44,8 @@ int main() {
         if (velMap.count(particleAddress)) {
             velocity = velMap[particleAddress];
         } else {
-            velocity = sf::Vector2f((rand() % 600 - 300) / 10.f, (rand() % 600 - 300) / 10.f);
+            velocity = sf::Vector2f((rand() % 600 - 300) / 10.f,
+                                    (rand() % 600 - 300) / 10.f);
             velMap.insert(std::make_pair(particleAddress, velocity));
         }
         particle.setPosition(particle.getPosition() + velocity * dt);

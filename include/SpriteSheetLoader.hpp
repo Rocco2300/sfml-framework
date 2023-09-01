@@ -4,14 +4,16 @@
 #include "SpriteSheet.hpp"
 
 template <typename ResHolder>
+concept SpriteSheetHolder =
+        std::is_same<typename ResHolder::ResourceType, SpriteSheet>::value;
+
+template <typename ResHolder>
+    requires SpriteSheetHolder<ResHolder>
 class SpriteSheetLoader : public ResourceLoader<ResHolder> {
     using Identifier = typename ResHolder::IdentifierType;
     using Resource = typename ResHolder::ResourceType;
 
-    static_assert(std::is_same<Resource, SpriteSheet>::value,
-                  "Error: SpriteSheet specialization required");
 private:
-
     std::string m_textureDirectory{};
     std::string m_textureFiletype{};
     std::string m_metadataDirectory{};

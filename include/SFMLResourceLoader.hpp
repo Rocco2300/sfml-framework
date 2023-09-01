@@ -2,7 +2,15 @@
 
 #include "ResourceLoader.hpp"
 
+#include <SFML/Audio/AlResource.hpp>
+#include <SFML/Window/GlResource.hpp>
+
+template <class Resource>
+concept SFMLResource = std::is_base_of<sf::GlResource, Resource>::value ||
+                       std::is_base_of<sf::AlResource, Resource>::value;
+
 template <typename ResHolder>
+    requires SFMLResource<typename ResHolder::ResourceType>
 class SFMLResourceLoader : public ResourceLoader<ResHolder> {
 private:
     using Identifier = typename ResHolder::IdentifierType;
