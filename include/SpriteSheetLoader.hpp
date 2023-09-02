@@ -5,7 +5,7 @@
 
 template <typename ResHolder>
 concept SpriteSheetHolder =
-        std::is_same<typename ResHolder::ResourceType, SpriteSheet>::value;
+        std::same_as<typename ResHolder::ResourceType, SpriteSheet>;
 
 template <typename ResHolder>
     requires SpriteSheetHolder<ResHolder>

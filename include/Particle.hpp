@@ -7,11 +7,11 @@
 #include <SFML/System/Time.hpp>
 
 #include <memory>
+#include <concepts>
 
 template <typename DrawableType, typename StateType>
+    requires std::copy_constructible<DrawableType>
 class Particle : public sf::Transformable, public sf::Drawable {
-    static_assert(std::is_copy_constructible<DrawableType>::value);
-
 private:
     DrawableType m_sprite;
     StateType m_state;
