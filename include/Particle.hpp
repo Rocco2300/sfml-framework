@@ -8,44 +8,57 @@
 
 #include <memory>
 
-//struct Particle {
-//    sf::Sprite
-//    sf::Vector2f position{};
-//
-//    float lifetime{};
-//};
-
-template <typename DrawableType>
+template <typename DrawableType, typename StateType>
 class Particle : public sf::Transformable, public sf::Drawable {
     static_assert(std::is_copy_constructible<DrawableType>::value);
 
 private:
     DrawableType m_sprite;
+    StateType m_state;
+
+    bool m_alive{};
     float m_lifetime{1.f};
 
 public:
     Particle() = default;
     Particle(DrawableType sprite, float lifetime = 1.f)
-        : m_sprite{sprite}, m_lifetime{lifetime} {}
+        : m_sprite{sprite}, m_alive{true}, m_lifetime{lifetime} {}
 
     Particle clone() { return *this; }
+    StateType& getState() { return m_state; }
+    const StateType& getState() const { return m_state; }
+    bool isAlive() { return m_alive; }
 
     void setSprite(DrawableType sprite) { m_sprite = sprite; }
     void setLifetime(float lifetime) { m_lifetime = lifetime; }
 
+    void update(sf::Time dt) {
+        if (m_lifetime > 0.f) {
+            m_lifetime -= dt.asSeconds();
+            m_alive = m_lifetime > 0.f;
+        }
+    }
+
     void draw(sf::RenderTarget& target,
               sf::RenderStates states) const override {
         states.transform *= getTransform();
-        target.draw(m_sprite, states);
+        if (m_alive) {
+            target.draw(m_sprite, states);
+        }
     }
 };
 
-template <typename DrawableType>
+template <typename ParticleType>
 class ParticleSystem : public sf::Transformable, public sf::Drawable {
 private:
-    Particle<DrawableType> m_prototypeParticle;
-    std::vector<Particle<DrawableType>> m_particles;
-    std::function<void(Particle<DrawableType>&, float)> m_updateFunction;
+    using SpawnFunction = std::function<void(ParticleType&)>;
+    using UpdateFunction = std::function<void(ParticleType&, float)>;
+
+    ParticleType m_prototypeParticle;
+    std::vector<ParticleType> m_particles;
+
+    SpawnFunction m_spawnFunction;
+    UpdateFunction m_updateFunction;
 
 public:
     ParticleSystem() = default;
@@ -54,16 +67,20 @@ public:
     void fuel(int particleNumber) {
         auto previousSize = m_particles.size();
         m_particles.resize(previousSize + particleNumber);
+
         std::fill(m_particles.begin() + previousSize, m_particles.end(),
                   m_prototypeParticle);
+        std::for_each(m_particles.begin() + previousSize, m_particles.end(),
+                      m_spawnFunction);
     }
 
-    void setParticle(Particle<DrawableType> particle) {
-        m_prototypeParticle = particle;
+    void setParticle(ParticleType particle) { m_prototypeParticle = particle; }
+
+    void setSpawnFunction(SpawnFunction&& spawnFunction) {
+        m_spawnFunction = std::move(spawnFunction);
     }
 
-    void setUpdateFunction(std::function<void(Particle<DrawableType>&, float)>&&
-                                   updateFunction) {
+    void setUpdateFunction(UpdateFunction&& updateFunction) {
         m_updateFunction = std::move(updateFunction);
     }
 
