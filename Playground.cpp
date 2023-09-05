@@ -42,7 +42,7 @@ int main() {
     std::cout << sprite.getLocalBounds().width << ' ' << sprite.getLocalBounds().height << '\n';
 
     Particle<sf::Sprite, ParticleState> particle(sprite, 1.f);
-    ParticleSystem<decltype(particle)> particleSystem;
+    ParticleSystem particleSystem(particle);
 
     auto spawnLambda = [](decltype(particle)& p) {
         auto& state = p.getState();

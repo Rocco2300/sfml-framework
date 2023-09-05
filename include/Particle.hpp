@@ -6,8 +6,8 @@
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/System/Time.hpp>
 
-#include <memory>
 #include <concepts>
+#include <memory>
 
 template <typename DrawableType, typename StateType>
     requires std::copy_constructible<DrawableType>
@@ -62,7 +62,9 @@ private:
 
 public:
     ParticleSystem() = default;
-    explicit ParticleSystem(const sf::Vector2f& pos) { setPosition(pos); }
+    explicit ParticleSystem(ParticleType particle) {
+        m_prototypeParticle = particle;
+    }
 
     void fuel(int particleNumber) {
         auto previousSize = m_particles.size();
