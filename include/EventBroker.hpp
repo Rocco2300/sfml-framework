@@ -20,10 +20,10 @@ public:
         m_subscribers.emplace(id, callbacks);
     }
 
-    // TODO: place holder
-    void notify(Identifier id) {
+    template <typename ...Args>
+    void notify(Identifier id, Args ...args) {
         for (const auto& callback : m_subscribers[id]) {
-            callback(id);
+            callback(args...);
         }
     }
 };

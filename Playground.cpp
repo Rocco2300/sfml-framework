@@ -1,3 +1,4 @@
+#include "EventBroker.hpp"
 #include "Particle.hpp"
 #include "ResourceHolder.hpp"
 #include "SFMLResourceLoader.hpp"
@@ -39,7 +40,8 @@ int main() {
     sprite.setTextureRect(*spriteSheet->getTextureRect("runningLeft", 3));
     sprite.setOrigin(24.f, 24.f);
     sprite.setScale({4.f, 4.f});
-    std::cout << sprite.getLocalBounds().width << ' ' << sprite.getLocalBounds().height << '\n';
+    std::cout << sprite.getLocalBounds().width << ' '
+              << sprite.getLocalBounds().height << '\n';
 
     Particle<sf::Sprite, ParticleState> particle(sprite, 1.f);
     ParticleSystem particleSystem(particle);
@@ -58,9 +60,23 @@ int main() {
         }
     };
 
-    auto updateLambda = [](decltype(particle)& p, float dt) {
-        p.setPosition(p.getPosition() + p.getState().velocity * dt);
+    auto callback = [](int x, int y) {
+        std::cout << "Particle exited at " << x << ' ' << y << '\n';
+    };
+
+    EventBroker<std::string, decltype(callback)> broker;
+    broker.subscribe("particle_exited", callback);
+    auto updateLambda = [&](decltype(particle)& p, float dt) {
+        auto& pos = p.getPosition();
+        p.setPosition(pos + p.getState().velocity * dt);
         p.setRotation(p.getRotation() + p.getState().rotationAmt * dt);
+
+        auto globalPos = pos + sf::Vector2f(200.f, 200.f);
+        if (globalPos.x < 0.f || globalPos.x > 400.f || globalPos.y < 0.f ||
+            globalPos.y > 400.f) {
+            broker.notify("particle_exited", p.getPosition().x,
+                          p.getPosition().y);
+        }
     };
 
     particleSystem.setPosition(200.f, 200.f);
