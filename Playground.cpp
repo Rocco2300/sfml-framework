@@ -18,6 +18,7 @@ struct Particle {
     sf::Sprite sprite;
 
     float speed;
+    float lifetime;
     sf::Vector2f dir;
     sf::Vector2f pos;
 };
@@ -53,12 +54,16 @@ int main() {
         particle.sprite.setOrigin(24.f, 24.f);
 
         particle.speed = 20.f;
+        particle.lifetime = 1.f;
         particle.dir.x = ((rand() % 200) - 100) / 100.f;
         particle.dir.y = ((rand() % 200) - 100) / 100.f;
     };
 
-    const auto updater = [](Particle& particle, sf::Time dt) {
+    const auto updater = [](Particle& particle, sf::Time dt) -> bool {
         particle.pos += particle.speed * particle.dir * dt.asSeconds();
+        particle.lifetime -= dt.asSeconds();
+
+        return (particle.lifetime >= 0.f);
     };
 
     const auto drawer = [](const Particle& particle, sf::RenderTarget& target,

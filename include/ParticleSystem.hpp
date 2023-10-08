@@ -14,7 +14,7 @@ public:
     using ParticlePtr = std::unique_ptr<ParticleType>;
 
     using GeneratorFunc = void(ParticleType&);
-    using UpdaterFunc = void(ParticleType&, sf::Time);
+    using UpdaterFunc = bool(ParticleType&, sf::Time);
     using DrawerFunc = void(const ParticleType&,
                             sf::RenderTarget&,
                             sf::RenderStates);
@@ -49,13 +49,19 @@ public:
         std::generate_n(m_particles.begin() + previousSize, particleNumber,
                         [&]() {
                             auto particle = std::make_unique<ParticleType>();
-                            m_generator(*particle.get());
+                            m_generator(*particle);
                             return std::move(particle);
                         });
     }
 
     void update(sf::Time dt) {
-        for (auto& particle: m_particles) { m_updater(*particle, dt); }
+        for (int i = m_particles.size() - 1; i >= 0 ; i--) {
+            auto isAlive = m_updater(*m_particles[i], dt);
+
+            if (!isAlive) {
+                m_particles.erase(m_particles.begin() + i);
+            }
+        }
     }
 
     void draw(sf::RenderTarget& target,
