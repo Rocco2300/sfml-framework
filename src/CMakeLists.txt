@@ -3,8 +3,6 @@ file(GLOB HEADERS ${CMAKE_SOURCE_DIR}/include/*.hpp)
 
 add_library(core
         ${HEADERS}
-        Particle.cpp
-        ParticleSystem.cpp
         SpriteSheet.cpp
         )
 

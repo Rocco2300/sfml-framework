@@ -1,5 +1,4 @@
 #include "EventBroker.hpp"
-#include "Particle.hpp"
 #include "ParticleSystem.hpp"
 #include "ResourceHolder.hpp"
 #include "SFMLResourceLoader.hpp"
@@ -14,6 +13,14 @@
 using json = nlohmann::json;
 
 const std::string Path = "C:/Users/grigo/Repos/sfml-framework/";
+
+struct Particle {
+    sf::Sprite sprite;
+
+    float speed;
+    sf::Vector2f dir;
+    sf::Vector2f pos;
+};
 
 int main() {
     srand(time(nullptr));
@@ -39,9 +46,33 @@ int main() {
     std::cout << sprite.getLocalBounds().width << ' '
               << sprite.getLocalBounds().height << '\n';
 
+    const auto generator = [&](Particle& particle) {
+        particle.sprite.setTexture(*spriteSheet->getTexture());
+        particle.sprite.setTextureRect(
+                *spriteSheet->getTextureRect("runningLeft", 3));
+        particle.sprite.setOrigin(24.f, 24.f);
 
-    ParticleSystem particleSystem;
+        particle.speed = 20.f;
+        particle.dir.x = ((rand() % 200) - 100) / 100.f;
+        particle.dir.y = ((rand() % 200) - 100) / 100.f;
+    };
+
+    const auto updater = [](Particle& particle, sf::Time dt) {
+        particle.pos += particle.speed * particle.dir * dt.asSeconds();
+    };
+
+    const auto drawer = [](const Particle& particle, sf::RenderTarget& target,
+                           sf::RenderStates states) {
+        states.transform.translate(particle.pos);
+        target.draw(particle.sprite, states);
+    };
+
+    ParticleSystem<Particle> particleSystem;
     particleSystem.setPosition(200.f, 200.f);
+    particleSystem.setGenerator(generator);
+    particleSystem.setUpdater(updater);
+    particleSystem.setDrawer(drawer);
+    particleSystem.fuel(100);
 
     sf::Clock deltaClock;
     while (window.isOpen()) {
@@ -53,7 +84,6 @@ int main() {
                 window.close();
         }
 
-        particleSystem.fuel<BasicParticle>(10);
         particleSystem.update(dt);
 
         window.clear();
