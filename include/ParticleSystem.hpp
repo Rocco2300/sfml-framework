@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <vector>
+#include <iostream>
 
 template <typename ParticleType>
 class ParticleSystem : public sf::Transformable, public sf::Drawable {
@@ -21,10 +22,15 @@ public:
 
 private:
     std::vector<ParticlePtr> m_particles;
+    std::vector<ParticlePtr> m_particlePool;
 
     std::function<GeneratorFunc> m_generator;
     std::function<UpdaterFunc> m_updater;
     std::function<DrawerFunc> m_drawer;
+
+    bool m_emitter{};
+    float m_accumulator{};
+    float m_emissionRate{};
 
 public:
     ParticleSystem() = default;
@@ -43,23 +49,37 @@ public:
     }
     // clang-format on
 
+    void setEmitter(bool emitter) { m_emitter = emitter; }
+
+    void setEmissionRate(float emissionRate) {
+        m_emissionRate = emissionRate / 60.f;
+    }
+
     void fuel(int particleNumber) {
-        auto previousSize = m_particles.size();
-        m_particles.resize(previousSize + particleNumber);
-        std::generate_n(m_particles.begin() + previousSize, particleNumber,
+        auto& particles = (m_emitter) ? m_particlePool : m_particles;
+        auto previousSize = particles.size();
+
+        particles.resize(previousSize + particleNumber);
+        std::generate_n(particles.begin() + previousSize, particleNumber,
                         [&]() {
                             auto particle = std::make_unique<ParticleType>();
-                            m_generator(*particle);
+                            if (!m_emitter) {
+                                m_generator(*particle);
+                            }
                             return std::move(particle);
                         });
     }
 
     void update(sf::Time dt) {
-        for (int i = m_particles.size() - 1; i >= 0 ; i--) {
+        if (m_emitter) {
+            emitParticles();
+        }
+
+        for (int i = m_particles.size() - 1; i >= 0; i--) {
             auto isAlive = m_updater(*m_particles[i], dt);
 
             if (!isAlive) {
-                m_particles.erase(m_particles.begin() + i);
+                killParticle(i);
             }
         }
     }
@@ -70,5 +90,35 @@ public:
         for (const auto& particle: m_particles) {
             m_drawer(*particle, target, states);
         }
+    }
+
+private:
+    void killParticle(size_t index) {
+        if (m_emitter) {
+            m_particlePool.push_back(std::move(m_particles[index]));
+        }
+        m_particles.erase(m_particles.begin() + index);
+    }
+
+    void emitParticles() {
+        if (m_particlePool.empty()) {
+            return;
+        }
+
+        m_accumulator += m_emissionRate;
+        while (m_accumulator >= 1.f && !m_particlePool.empty()) {
+            m_particles.push_back(std::move(m_particlePool.front()));
+            m_generator(*m_particles.back());
+            m_particlePool.erase(m_particlePool.begin());
+            m_accumulator -= 1.f;
+        }
+//        auto emittedParticles = (m_emissionRate <= m_particlePool.size())
+//                                        ? m_emissionRate
+//                                        : m_particlePool.size();
+//        for (int i = emittedParticles - 1; i >= 0; i--) {
+//            m_particles.push_back(std::move(m_particlePool[i]));
+//            m_generator(*m_particles.back());
+//            m_particlePool.erase(m_particlePool.begin() + i);
+//        }
     }
 };

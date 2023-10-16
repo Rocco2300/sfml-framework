@@ -53,7 +53,8 @@ int main() {
                 *spriteSheet->getTextureRect("runningLeft", 3));
         particle.sprite.setOrigin(24.f, 24.f);
 
-        particle.speed = 20.f;
+        particle.pos = sf::Vector2f(0.f, 0.f);
+        particle.speed = 50.f;
         particle.lifetime = 1.f;
         particle.dir.x = ((rand() % 200) - 100) / 100.f;
         particle.dir.y = ((rand() % 200) - 100) / 100.f;
@@ -77,6 +78,8 @@ int main() {
     particleSystem.setGenerator(generator);
     particleSystem.setUpdater(updater);
     particleSystem.setDrawer(drawer);
+    particleSystem.setEmitter(true);
+    particleSystem.setEmissionRate(1.f);
     particleSystem.fuel(100);
 
     sf::Clock deltaClock;
