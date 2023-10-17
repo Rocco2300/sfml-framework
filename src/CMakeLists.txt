@@ -3,6 +3,7 @@ file(GLOB HEADERS ${CMAKE_SOURCE_DIR}/include/*.hpp)
 
 add_library(core
         ${HEADERS}
+        Animator.cpp
         SpriteSheet.cpp
         )
 

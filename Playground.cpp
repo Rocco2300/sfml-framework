@@ -1,3 +1,4 @@
+#include "Animator.hpp"
 #include "EventBroker.hpp"
 #include "ParticleSystem.hpp"
 #include "ResourceHolder.hpp"
@@ -41,11 +42,21 @@ int main() {
     sf::Sprite sprite;
     auto* spriteSheet = &spritesheetHolder.get("player");
     sprite.setTexture(*spriteSheet->getTexture());
-    sprite.setTextureRect(*spriteSheet->getTextureRect("runningLeft", 3));
-    sprite.setOrigin(24.f, 24.f);
-    sprite.setScale({4.f, 4.f});
-    std::cout << sprite.getLocalBounds().width << ' '
-              << sprite.getLocalBounds().height << '\n';
+    sprite.setTextureRect(*spriteSheet->getTextureRect("runningLeft", 0));
+    sprite.setScale(4.f, 4.f);
+    sprite.setPosition(30.f, 30.f);
+
+    Animator animator;
+    animator.setSprite(sprite);
+    animator.setSpriteSheet(*spriteSheet);
+    animator.setCurrentAnimation("runningLeft");
+    std::unordered_map<std::string, std::vector<float>> frameTimes = {
+            {"runningDown", {0.3f, 0.3f, 0.3f, 0.3f}},
+            {"runningUp", {0.3f, 0.3f, 0.3f, 0.3f}},
+            {"runningLeft", {0.3f, 1.3f, 0.3f, 0.3f}},
+            {"runningRight", {0.3f, 0.3f, 0.3f, 0.3f}},
+    };
+    animator.setFrameTimes(frameTimes);
 
     const auto generator = [&](Particle& particle) {
         particle.sprite.setTexture(*spriteSheet->getTexture());
@@ -93,9 +104,11 @@ int main() {
         }
 
         particleSystem.update(dt);
+        animator.update(dt);
 
         window.clear();
         window.draw(particleSystem);
+        window.draw(sprite);
         window.display();
     }
 
