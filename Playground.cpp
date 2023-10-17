@@ -42,7 +42,7 @@ int main() {
     sf::Sprite sprite;
     auto* spriteSheet = &spritesheetHolder.get("player");
     sprite.setTexture(*spriteSheet->getTexture());
-    sprite.setTextureRect(*spriteSheet->getTextureRect("runningLeft", 0));
+    sprite.setTextureRect(*spriteSheet->getTextureRect("runningLeft", 3));
     sprite.setScale(4.f, 4.f);
     sprite.setPosition(30.f, 30.f);
 
