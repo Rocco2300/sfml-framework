@@ -25,7 +25,7 @@ bool SpriteSheet::containsSector(const std::string& name) {
 std::optional<sf::IntRect> SpriteSheet::getTextureRect(const std::string& name,
                                                        uint16_t index) {
     auto sector = getSector(name);
-    if (index < 0 || index > sector->tiles.size()) {
+    if (!sector || index < 0 || index > sector->tiles.size()) {
         return std::nullopt;
     }
 
