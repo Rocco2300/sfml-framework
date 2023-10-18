@@ -5,6 +5,7 @@
 #include "SFMLResourceLoader.hpp"
 #include "SpriteSheet.hpp"
 #include "SpriteSheetLoader.hpp"
+#include "Sprite.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <nlohmann/json.hpp>
@@ -53,6 +54,13 @@ int main() {
     if (!animator.loadFromFile(Path + "animation.json")) {
         std::cerr << "Error loading file\n";
     }
+
+    Sprite sprite1;
+    sprite1.setSpriteSheet(*spriteSheet);
+    sprite1.setSector("runningDown");
+    sprite1.setFrame(2);
+    sprite1.setScale(4.f, 4.f);
+    sprite1.setPosition(-50.f, -50.f);
 
     const auto generator = [&](Particle& particle) {
         particle.sprite.setTexture(*spriteSheet->getTexture());
@@ -105,6 +113,7 @@ int main() {
         window.clear();
         window.draw(particleSystem);
         window.draw(sprite);
+        window.draw(sprite1);
         window.display();
     }
 
