@@ -1,5 +1,11 @@
 #include "Animator.hpp"
 
+#include "nlohmann/json.hpp"
+
+#include <fstream>
+
+using json = nlohmann::json;
+
 void Animator::setSprite(sf::Sprite& sprite) { m_sprite = &sprite; }
 
 void Animator::setSpriteSheet(SpriteSheet& spriteSheet) {
@@ -21,9 +27,24 @@ void Animator::setCurrentAnimation(std::string_view currentAnimation) {
     }
 }
 
-void Animator::setFrameTimes(
-        std::unordered_map<std::string, std::vector<float>>& frameTimes) {
-    m_frameTimes = frameTimes;
+bool Animator::loadFromFile(const std::string& filename) {
+    std::ifstream in(filename);
+    if (in.fail()) {
+        return false;
+    }
+
+    auto fileData = json::parse(in);
+    in.close();
+
+    auto animations = fileData.at("animations");
+    for (const auto& animation: animations) {
+        auto name = animation.at("name");
+        auto frameTimes = animation.at("frameTimes");
+
+        m_frameTimes.insert(std::make_pair(name, frameTimes));
+    }
+
+    return true;
 }
 
 void Animator::update(sf::Time dt) {

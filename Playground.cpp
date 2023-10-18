@@ -50,13 +50,9 @@ int main() {
     animator.setSprite(sprite);
     animator.setSpriteSheet(*spriteSheet);
     animator.setCurrentAnimation("runningLeft");
-    std::unordered_map<std::string, std::vector<float>> frameTimes = {
-            {"runningDown", {0.3f, 0.3f, 0.3f, 0.3f}},
-            {"runningUp", {0.3f, 0.3f, 0.3f, 0.3f}},
-            {"runningLeft", {0.3f, 1.3f, 0.3f, 0.3f}},
-            {"runningRight", {0.3f, 0.3f, 0.3f, 0.3f}},
-    };
-    animator.setFrameTimes(frameTimes);
+    if (!animator.loadFromFile(Path + "animation.json")) {
+        std::cerr << "Error loading file\n";
+    }
 
     const auto generator = [&](Particle& particle) {
         particle.sprite.setTexture(*spriteSheet->getTexture());

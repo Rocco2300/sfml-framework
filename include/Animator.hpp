@@ -21,8 +21,8 @@ public:
     void setSprite(sf::Sprite& sprite);
     void setSpriteSheet(SpriteSheet& spriteSheet);
     void setCurrentAnimation(std::string_view currentAnimation);
-    void setFrameTimes(
-            std::unordered_map<std::string, std::vector<float>>& frameTimes);
+
+    bool loadFromFile(const std::string& filename);
 
     void update(sf::Time dt);
 };
