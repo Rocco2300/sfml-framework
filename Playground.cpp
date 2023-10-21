@@ -47,20 +47,21 @@ int main() {
     sprite.setScale(4.f, 4.f);
     sprite.setPosition(30.f, 30.f);
 
-    Animator animator;
-    animator.setSprite(sprite);
-    animator.setSpriteSheet(*spriteSheet);
-    animator.setCurrentAnimation("runningLeft");
-    if (!animator.loadFromFile(Path + "animation.json")) {
-        std::cerr << "Error loading file\n";
-    }
-
     Sprite sprite1;
     sprite1.setSpriteSheet(*spriteSheet);
     sprite1.setSector("runningDown");
     sprite1.setFrame(2);
     sprite1.setScale(4.f, 4.f);
     sprite1.setPosition(-50.f, -50.f);
+
+
+    Animator animator;
+    animator.setSprite(sprite1);
+//    animator.setSpriteSheet(*spriteSheet);
+    animator.setCurrentAnimation("runningLeft");
+    if (!animator.loadFromFile(Path + "animation.json")) {
+        std::cerr << "Error loading file\n";
+    }
 
     const auto generator = [&](Particle& particle) {
         particle.sprite.setTexture(*spriteSheet->getTexture());
@@ -105,6 +106,21 @@ int main() {
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
+
+            if (event.type == sf::Event::KeyPressed) {
+                if (event.key.code == sf::Keyboard::A) {
+                    sprite1.setSector("runningLeft");
+                }
+                if (event.key.code == sf::Keyboard::S) {
+                    sprite1.setSector("runningDown");
+                }
+                if (event.key.code == sf::Keyboard::D) {
+                    sprite1.setSector("runningRight");
+                }
+                if (event.key.code == sf::Keyboard::W) {
+                    sprite1.setSector("runningUp");
+                }
+            }
         }
 
         particleSystem.update(dt);
