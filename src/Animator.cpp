@@ -6,10 +6,15 @@
 
 using json = nlohmann::json;
 
+// Function to set the sprite which the animator will manipulate.
+// Parameters: sprite - the sprite which will be animated,
+//                      animator doesn't own it
 void Animator::setSprite(Sprite& sprite) { m_sprite = &sprite; }
 
-// TODO: might have to add a check if sector exists \
-         and if animation exists in map
+// TODO: might have to add a check if sector exists
+//       and if animation exists in map
+// Function to set the current animation
+// Parameters: currentAnimation - name of the animation to play
 void Animator::setCurrentAnimation(std::string_view currentAnimation) {
     m_currentFrame = 0;
     m_currentAnimation = currentAnimation;
@@ -20,6 +25,9 @@ void Animator::setCurrentAnimation(std::string_view currentAnimation) {
     }
 }
 
+// Function to load animation data from file
+// Parameters: filename - path to the file to be loaded
+// Returns: true if loaded, false on error
 bool Animator::loadFromFile(const std::string& filename) {
     std::ifstream in(filename);
     if (in.fail()) {
@@ -40,6 +48,8 @@ bool Animator::loadFromFile(const std::string& filename) {
     return true;
 }
 
+// Function to update animation frame
+// Parameters: dt - delta time
 void Animator::update(sf::Time dt) {
     m_accumulator += dt.asSeconds();
 

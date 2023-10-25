@@ -57,7 +57,6 @@ int main() {
 
     Animator animator;
     animator.setSprite(sprite1);
-//    animator.setSpriteSheet(*spriteSheet);
     animator.setCurrentAnimation("runningLeft");
     if (!animator.loadFromFile(Path + "animation.json")) {
         std::cerr << "Error loading file\n";

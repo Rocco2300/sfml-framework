@@ -11,8 +11,13 @@
 namespace fs = std::filesystem;
 using json = nlohmann::json;
 
+// Function to get the texture
+// Returns: The texture that is loaded in the spritesheet
 sf::Texture* SpriteSheet::getTexture() { return m_texture.get(); }
 
+// Function to check if a sprite sector exists.
+// Parameters: name - name of the sector to search for
+// Returns: true if found, false otherwise
 bool SpriteSheet::containsSector(const std::string& name) {
     auto sameName = [&](const auto& sector) { return sector.name == name; };
     if (std::ranges::any_of(m_sectors, sameName)) {
@@ -22,6 +27,10 @@ bool SpriteSheet::containsSector(const std::string& name) {
     return false;
 }
 
+// Function to get the bounds of a single tile from spritesheet.
+// Parameters: name - name of the sprite sector within spritesheet
+//             index - frame number of the sprite within sector
+// Returns: The bounds of the sprite, or null if not found.
 std::optional<sf::IntRect> SpriteSheet::getTextureRect(const std::string& name,
                                                        uint16_t index) {
     auto sector = getSector(name);

@@ -42,3 +42,7 @@ cmake-build-*/
 *.tex
 *.png
 *.json
+
+# Generated documentation
+docs/html
+docs/latex
