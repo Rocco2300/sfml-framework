@@ -42,7 +42,7 @@ public:
      */
     SFMLResourceLoader(ResHolder& resourceHolder,
                        std::string_view directory = "",
-                       std::string_view filetype = "")
+                       std::string_view filetype = "png")
         : ResourceLoader<ResHolder>(resourceHolder),
           m_directory{directory},
           m_filetype{filetype} {}
@@ -55,7 +55,7 @@ public:
 
     /**
      * @brief Setter for the filetype of the resources
-     * @param filetype - file extension (e.g. ".png")
+     * @param filetype - file extension (e.g. "png")
      */
     void setFiletype(std::string_view filetype) { m_filetype = filetype; }
 
@@ -71,7 +71,7 @@ public:
     void load(Identifier id, std::string_view filename) override {
         std::unique_ptr<Resource> resource(new Resource);
 
-        std::string path = m_directory + std::string(filename) + m_filetype;
+        auto path = m_directory + std::string(filename) + '.' + m_filetype;
         if (!resource->loadFromFile(path)) {
             std::cerr << "Error loading resource from " << path << '\n';
         }

@@ -22,6 +22,8 @@ class SpriteSheetLoader : public ResourceLoader<ResHolder> {
     using Resource = typename ResHolder::ResourceType;
 
 private:
+    bool m_useSingleDirectory;
+
     std::string m_textureDirectory{};
     std::string m_textureFiletype{};
     std::string m_metadataDirectory{};
@@ -32,7 +34,7 @@ public:
      * @brief Default constructor
      */
     SpriteSheetLoader() = default;
-    // TODO: fix this atrocity (struct to hold data?)
+
     /**
      * @brief Construct the loader with ResourceHolder reference
      * @param resourceHolder - SpriteSheet holder
@@ -43,9 +45,9 @@ public:
      */
     SpriteSheetLoader(ResHolder& resourceHolder,
                       std::string_view textureDirectory = "",
-                      std::string_view textureFiletype = "",
                       std::string_view metadataDirectory = "",
-                      std::string_view metadataFiletype = "")
+                      std::string_view textureFiletype = "png",
+                      std::string_view metadataFiletype = "json")
         : ResourceLoader<ResHolder>(resourceHolder),
           m_textureDirectory{textureDirectory},
           m_textureFiletype{textureFiletype},
@@ -70,7 +72,7 @@ public:
 
     /**
      * @brief Setter for the texture file extension
-     * @param fileType - file extension
+     * @param fileType - file extension (e.g. "png")
      */
     void setTextureFiletype(std::string_view fileType) {
         m_textureFiletype = fileType;
@@ -78,10 +80,19 @@ public:
 
     /**
      * @brief Setter for the metadata file extension
-     * @param fileType - file extension
+     * @param fileType - file extension (e.g. "json")
      */
     void setMetadataFiletype(std::string_view fileType) {
         m_metadataFiletype = fileType;
+    }
+
+    /**
+     * @brief Set use single directory, if it's true, metadata files will
+     * be loaded from textureDirectory instead of metadataDirectory
+     * @param useSingleDirectory - single directory loading switch
+     */
+    void useSingleDirectory(bool useSingleDirectory) {
+        m_useSingleDirectory = useSingleDirectory;
     }
 
     /**
@@ -94,15 +105,17 @@ public:
     void load(Identifier id, std::string_view filename) override {
         std::unique_ptr<Resource> resource(new Resource);
 
-        std::string texturePath =
-                m_textureDirectory + std::string(filename) + m_textureFiletype;
+        auto texturePath = m_textureDirectory + std::string(filename) + '.' +
+                           m_textureFiletype;
         if (!resource->loadTextureFromFile(texturePath)) {
             std::cerr << "Error loading texture of spritesheet " << filename
                       << ".\n";
         }
 
-        std::string metadataPath = m_metadataDirectory + std::string(filename) +
-                                   m_metadataFiletype;
+        auto metadataDirectory = (m_useSingleDirectory) ? m_textureDirectory
+                                                        : m_metadataDirectory;
+        auto metadataPath = metadataDirectory + std::string(filename) + '.' +
+                            m_metadataFiletype;
         if (!resource->loadMetadataFromFile(metadataPath)) {
             std::cerr << "Error loading metadata of spritesheet " << filename
                       << ".\n";
