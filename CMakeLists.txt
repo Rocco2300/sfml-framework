@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_subdirectory(src)
 add_subdirectory(vendor/sfml)
+add_subdirectory(examples)
 
 add_executable(playground Playground.cpp)
 target_include_directories(playground PUBLIC include)
