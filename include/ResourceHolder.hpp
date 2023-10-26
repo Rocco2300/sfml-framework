@@ -67,6 +67,32 @@ public:
         return *it->second;
     }
 
+    /**
+     * @brief Removes an element from the holder
+     * @param id - id of the item to remove
+     */
+    void remove(Identifier id) {
+        auto it = m_assetMap.find(id);
+        if (it == m_assetMap.end()) {
+            std::stringstream errorMessage;
+            errorMessage << "ResourceHolder::get - resource " << id
+                         << " doesn't exist";
+            throw std::runtime_error(errorMessage.str());
+        }
+
+        m_assetMap.erase(it);
+    }
+
+    /**
+     * @brief Check if a item exits by id
+     * @param id - id to search for
+     * @return true if it's stored, false otherwise
+     */
+    bool contains(Identifier id) const {
+        auto it = m_assetMap.find(id);
+        return (it != m_assetMap.end());
+    }
+
 private:
     void insertResource(Identifier id, std::unique_ptr<Resource> resource) {
         auto inserted =
