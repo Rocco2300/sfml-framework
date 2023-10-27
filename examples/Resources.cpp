@@ -32,11 +32,11 @@ int main() {
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
-
-            window.clear();
-            window.draw(sprite);
-            window.display();
         }
+
+        window.clear();
+        window.draw(sprite);
+        window.display();
     }
 
     // Clean the resources
