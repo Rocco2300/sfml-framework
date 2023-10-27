@@ -39,5 +39,8 @@ int main() {
         }
     }
 
+    // Clean the resources
+    textureHolder.remove("player");
+
     return 0;
 }

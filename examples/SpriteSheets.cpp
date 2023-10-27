@@ -48,5 +48,8 @@ int main() {
         }
     }
 
+    // Clean the resources
+    spriteSheetHolder.remove("player");
+
     return 0;
 }
