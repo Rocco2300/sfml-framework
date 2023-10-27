@@ -31,12 +31,9 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(400, 400), "SFML works!");
     window.setFramerateLimit(60);
 
-    ResourceHolder<std::string, sf::Texture> textureHolder;
-    SFMLResourceLoader sfmlLoader(textureHolder, Path, ".png");
-
     ResourceHolder<std::string, SpriteSheet> spritesheetHolder;
-    SpriteSheetLoader spriteSheetLoader(spritesheetHolder, Path, ".png", Path,
-                                        ".json");
+    SpriteSheetLoader spriteSheetLoader(spritesheetHolder, Path);
+    spriteSheetLoader.useSingleDirectory(true);
 
     spriteSheetLoader.load("player", "testing");
 
